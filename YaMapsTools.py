@@ -9,8 +9,8 @@ GEO_SERVER = "http://geocode-maps.yandex.ru/1.x/"
 ORG_SERVER = "https://search-maps.yandex.ru/v1/"
 
 MAP_KEY = None  # Ключ для коммерческой версии Static API, если нужен.
-GEO_KEY = ""  # Ключ к API Геокодера. Обязателен.
-ORG_KEY = ""  # Ключ к API Поиска по организациям. Обязателен.
+GEO_KEY = ""    # Ключ к API Геокодера. Обязателен.
+ORG_KEY = ""    # Ключ к API Поиска по организациям. Обязателен.
 
 
 # Карта
