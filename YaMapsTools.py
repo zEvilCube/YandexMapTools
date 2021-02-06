@@ -1,3 +1,5 @@
+# https://github.com/zEvilCube/YandexMapTools
+
 import requests
 import sys
 import math
@@ -116,7 +118,10 @@ def get_org_name(toponym):
 
 # Режим работы организации
 def get_org_schedule(toponym):
-    return toponym['properties']['CompanyMetaData']['Hours']['text']
+    try:
+        return toponym['properties']['CompanyMetaData']['Hours']['text']
+    except Exception:
+        return None
 
 
 # Узнать, работает ли организация круглосуточно
