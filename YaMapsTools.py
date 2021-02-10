@@ -31,24 +31,30 @@ def get_map_response(ll, _l="map", key=MAP_KEY, spn=None, z=None, size=None, sca
 # Топонимы объектов
 def get_geo_toponyms(code, apikey=GEO_KEY, kind=None, rspn=None, ll=None, spn=None, bbox=None,
                      _format="json", lang="ru_RU", results=1, skip=None):
-    params = {"apikey": apikey, "geocode": code, "kind": kind, "rspn": rspn, "ll": ll,
-              "spn": spn, "bbox": bbox, "format": _format, "lang": lang,
-              "results": results, "skip": skip}
-    response = requests.get(GEO_SERVER, params=params)
-    if not response:
-        print("Ошибка в запросе:")
-        print(response.url.replace('%2C', ','))
-        print("Http статус:", response.status_code, "(", response.reason, ")")
-        sys.exit(1)
-    return response.json()["response"]["GeoObjectCollection"]["featureMember"]
+    try:
+        params = {"apikey": apikey, "geocode": code, "kind": kind, "rspn": rspn, "ll": ll,
+                  "spn": spn, "bbox": bbox, "format": _format, "lang": lang,
+                  "results": results, "skip": skip}
+        response = requests.get(GEO_SERVER, params=params)
+        if not response:
+            print("Ошибка в запросе:")
+            print(response.url.replace('%2C', ','))
+            print("Http статус:", response.status_code, "(", response.reason, ")")
+            sys.exit(1)
+        return response.json()["response"]["GeoObjectCollection"]["featureMember"]
+    except Exception:
+        return None
 
 
 # Топоним объекта под номером N
 def get_geo_toponym(code, n=0, apikey=GEO_KEY, kind=None, rspn=None, ll=None, spn=None,
                     bbox=None, _format="json", lang="ru_RU"):
-    toponyms = get_geo_toponyms(code, apikey=apikey, kind=kind, rspn=rspn, ll=ll, spn=spn, bbox=bbox,
-                                _format=_format, lang=lang, results=n + 1, skip=n)
-    return toponyms[n]["GeoObject"]
+    try:
+        toponyms = get_geo_toponyms(code, apikey=apikey, kind=kind, rspn=rspn, ll=ll, spn=spn, bbox=bbox,
+                                    _format=_format, lang=lang, results=n + 1, skip=n)
+        return toponyms[n]["GeoObject"]
+    except Exception:
+        return None
 
 
 # Район объекта
@@ -74,30 +80,37 @@ def get_geo_borders(toponym):
 # Размеры объекта
 def get_geo_size(toponym):
     lon1, lon2, lat1, lat2 = get_geo_borders(toponym)
-    return lon2 - lon1, lat2 - lat1
+    w = get_distance((lon1, lat1), (lon2, lat1)) / (111 * 1000)
+    h = get_distance((lon1, lat1), (lon1, lat2)) / (111 * 1000)
+    return w, h
 
 
 # Топонимы организаций
 def get_org_toponyms(code, apikey=ORG_KEY, lang='ru_RU', _type='biz', ll=None,
                      spn=None, bbox=None, results=1, skip=None):
-    ll_str = f'{str(ll[0])}, {str(ll[1])}'
-    params = {"apikey": apikey, "text": code, "lang": lang, "type": _type, "ll": ll_str,
-              "spn": spn, "bbox": bbox, "results": results, "skip": skip}
-    response = requests.get(ORG_SERVER, params=params)
-    if not response:
-        print("Ошибка в запросе:")
-        print(response.url.replace('%2C', ','))
-        print("Http статус:", response.status_code, "(", response.reason, ")")
-        sys.exit(1)
-    return response.json()['features']
+    try:
+        params = {"apikey": apikey, "text": code, "lang": lang, "type": _type, "ll": ll,
+                  "spn": spn, "bbox": bbox, "results": results, "skip": skip}
+        response = requests.get(ORG_SERVER, params=params)
+        if not response:
+            print("Ошибка в запросе:")
+            print(response.url.replace('%2C', ','))
+            print("Http статус:", response.status_code, "(", response.reason, ")")
+            sys.exit(1)
+        return response.json()['features']
+    except Exception:
+        return None
 
 
 # Топоним организации под номером N
 def get_org_toponym(code, n=0, apikey=ORG_KEY, lang='ru_RU', _type='biz', ll=None,
                     spn=None, bbox=None):
-    toponyms = get_org_toponyms(code, apikey=apikey, lang=lang, _type=_type, ll=ll,
-                                spn=spn, bbox=bbox, results=n + 1, skip=n)
-    return toponyms[n]
+    try:
+        toponyms = get_org_toponyms(code, apikey=apikey, lang=lang, _type=_type, ll=ll,
+                                    spn=spn, bbox=bbox, results=n + 1, skip=n)
+        return toponyms[n]
+    except Exception:
+        return None
 
 
 # Координаты организации
