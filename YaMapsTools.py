@@ -28,6 +28,16 @@ def get_map_response(ll, _l="map", key=MAP_KEY, spn=None, z=None, size=None, sca
     return response
 
 
+# Записать карту в файл
+def write_map_as_file(map_response, filename):
+    try:
+        with open(filename, "wb") as file:
+            file.write(map_response.content)
+        return True
+    except Exception:
+        return False
+
+
 # Топонимы объектов
 def get_geo_toponyms(code, apikey=GEO_KEY, kind=None, rspn=None, ll=None, spn=None, bbox=None,
                      _format="json", lang="ru_RU", results=1, skip=None):
